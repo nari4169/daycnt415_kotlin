@@ -205,9 +205,7 @@
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         app:adSize="BANNER"
-        app:adUnitId="@string/adunitid"></com.google.android.gms.ads.AdView>
+        app:adUnitId="@string/adunitid"/>
 
 </LinearLayout>

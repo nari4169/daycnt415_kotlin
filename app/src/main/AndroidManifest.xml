@@ -13,8 +13,8 @@
         android:roundIcon="@mipmap/ic_calendar_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Daycnt311">
-        <activity android:name="com.billcoreatech.daycnt415.SettingActivity" />
-        <activity android:name="com.billcoreatech.daycnt415.dayManager.InitActivity"
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".dayManager.InitActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.billcoreatech.daycnt415.util.DayCntWidget"
+        <receiver android:name=".util.DayCntWidget"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -33,13 +33,13 @@
                 android:resource="@xml/day_cnt_widget_info" />
         </receiver>
 
-        <activity android:name="com.billcoreatech.daycnt415.util.DayCntWidgetConfigureActivity"
+        <activity android:name=".util.DayCntWidgetConfigureActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
-        <activity android:name="com.billcoreatech.daycnt415.MainActivity" />
+        <activity android:name=".MainActivity" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

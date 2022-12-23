@@ -1,44 +1,32 @@
-package com.billcoreatech.daycnt415.util;
+package com.billcoreatech.daycnt415.util
 
+import android.content.Context
+import android.graphics.Rect
+import android.util.AttributeSet
+import androidx.appcompat.widget.AppCompatTextView
 
-import android.content.Context;
-import android.graphics.Rect;
-import android.util.AttributeSet;
+class MarqueeTextView : AppCompatTextView {
+    var TAG = "MarqueeTextView"
 
-public class MarqueeTextView extends androidx.appcompat.widget.AppCompatTextView {
-
-    String TAG = "MarqueeTextView" ;
-
-    public MarqueeTextView(Context context) {
-        super(context);
+    constructor(context: Context?) : super(context!!) {}
+    constructor(context: Context?, attributeSet: AttributeSet?) : super(
+        context!!, attributeSet
+    ) {
     }
 
-    public MarqueeTextView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-    }
-
-    @Override
-    protected void onFocusChanged(boolean focused, int direction, Rect
-            previouslyFocusedRect) {
+    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
 
         //Log.d(TAG, "getMarqueeRepeatLimit onFocusChanged(" + this.getMarqueeRepeatLimit() + ")") ;
-
-        if(focused)
-            super.onFocusChanged(focused, direction, previouslyFocusedRect);
-
+        if (focused) super.onFocusChanged(focused, direction, previouslyFocusedRect)
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean focused) {
+    override fun onWindowFocusChanged(focused: Boolean) {
 
         //Log.d(TAG, "getMarqueeRepeatLimit onWindowFocusChanged (" + this.getMarqueeRepeatLimit() + ")") ;
-
-        if(focused)
-            super.onWindowFocusChanged(focused);
+        if (focused) super.onWindowFocusChanged(focused)
     }
 
-    @Override
-    public boolean isFocused() {
-        return true;
+    override fun isFocused(): Boolean {
+        return true
     }
 }
