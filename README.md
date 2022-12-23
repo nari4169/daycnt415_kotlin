@@ -4,7 +4,7 @@
 
 을 kotlin 으로 변환 했습니다.  구글 인앱 결제 처리의 kotlin 버전 예시를 볼 수 있습니다. 
 
-이와 관련된 게시글은 https://billcorea.tistory.com 에서 보실 수 있습니다. 
+이와 관련된 게시글은 https://billcorea.tistory.com/297 에서 보실 수 있습니다. 
 
 playstore 에 게시된 앱은 
 
