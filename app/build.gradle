@@ -13,15 +13,16 @@ android {
         applicationId "com.billcoreatech.daycnt415"
         minSdk 24
         targetSdk 33
-        versionCode 16
-        versionName '1.1.16'
+        versionCode 17
+        versionName '1.1.17'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

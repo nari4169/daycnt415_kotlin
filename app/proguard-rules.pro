@@ -19,3 +19,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep public class com.billcoreatech.daycnt415.dayManager.** { *; }
+-keep public class com.billcoreatech.daycnt415.billing.** { *; }
+-keep public class com.billcoreatech.daycnt415.database.** { *; }
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
