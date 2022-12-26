@@ -26,7 +26,6 @@ import com.billcoreatech.daycnt415.dayManager.DayinfoBean
 import com.billcoreatech.daycnt415.util.GridAdapter
 import com.billcoreatech.daycnt415.util.Holidays
 import com.billcoreatech.daycnt415.util.StringUtil
-import com.github.anrwatchdog.ANRWatchDog
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
@@ -97,7 +96,7 @@ class MainActivity() : AppCompatActivity() {
         curMonthFormat = SimpleDateFormat("MM")
         detector = GestureDetectorCompat(this, MyGestureListener())
         strUtil = StringUtil
-        ANRWatchDog().start()
+
         MobileAds.initialize(this, OnInitializationCompleteListener { })
         adRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)

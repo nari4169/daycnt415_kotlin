@@ -16,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.billcoreatech.daycnt415.billing.BillingManager
 import com.billcoreatech.daycnt415.billing.BillingManager.connectStatusTypes
 import com.billcoreatech.daycnt415.databinding.ActivitySettingBinding
-import com.github.anrwatchdog.ANRWatchDog
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.initialization.InitializationStatus
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener
@@ -52,7 +51,7 @@ class SettingActivity : AppCompatActivity() {
         MobileAds.initialize(this, object : OnInitializationCompleteListener {
             public override fun onInitializationComplete(initializationStatus: InitializationStatus) {}
         })
-        ANRWatchDog().start()
+
         val adRequest: AdRequest = AdRequest.Builder().build()
         binding.adView.loadAd(adRequest)
         editor = option.edit()

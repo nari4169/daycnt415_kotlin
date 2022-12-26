@@ -4,17 +4,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.billcoreatech.daycnt415.MainActivity
 import com.billcoreatech.daycnt415.R
-import com.billcoreatech.daycnt415.billing.BillingManager
 import com.billcoreatech.daycnt415.database.DBHandler
 import com.billcoreatech.daycnt415.databinding.ActivityInitBinding
 import com.billcoreatech.daycnt415.util.Holidays
 import com.billcoreatech.daycnt415.util.LunarCalendar
-import com.github.anrwatchdog.ANRWatchDog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -37,20 +35,12 @@ class InitActivity : AppCompatActivity() {
         setContentView(view)
         holidays = ArrayList()
 
-        // new ANRWatchDog().start();
-        ANRWatchDog().setANRListener { error -> // Handle the error. For example, log it to HockeyApp:
-            // ExceptionHandler.saveException(error, new CrashManager());
-            Log.e(TAG, "ANR ERROR = $error")
-        }.start()
-
         sharedPreferences = getSharedPreferences("holidayData", MODE_PRIVATE)
         if ("N" != sharedPreferences.getString("INIT", "N")) {
             val intent = Intent(this@InitActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
-
-
 
         binding.btnInit.setOnClickListener {
             val builder = AlertDialog.Builder(this@InitActivity)
