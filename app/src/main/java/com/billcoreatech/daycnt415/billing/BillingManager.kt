@@ -116,6 +116,12 @@ class BillingManager(var mActivity: Activity) : PurchasesUpdatedListener, Consum
                     Log.e(TAG, "getPurchaseToken=" + purchase.purchaseToken)
                     for (str in purchase.skus) {
                         Log.e(TAG, "getSkus=$str")
+                        // 이번에 구매한 경우만 적용 하기 위해서 : 이전 버전의 인앱 결제가 취소되었다고 해도 이번 버전 확인 하는 기능에 필요
+                        if (str.equals(punchName)) {
+                            editor = option.edit()
+                            editor.putBoolean("isBill", purchase.isAutoRenewing)
+                            editor.commit()
+                        }
                     }
                     val now = Date()
                     now.time = purchase.purchaseTime
@@ -124,9 +130,6 @@ class BillingManager(var mActivity: Activity) : PurchasesUpdatedListener, Consum
                     Log.e(TAG, "getSignature=" + purchase.signature)
                     Log.e(TAG, "isAutoRenewing=" + purchase.isAutoRenewing)
                     Log.e(TAG, "getPurchaseState=" + purchase.purchaseState)
-                    editor = option.edit()
-                    editor.putBoolean("isBill", purchase.isAutoRenewing)
-                    editor.commit()
                 }
             }
             Log.e(TAG, "--------------------------------------------------------------")
