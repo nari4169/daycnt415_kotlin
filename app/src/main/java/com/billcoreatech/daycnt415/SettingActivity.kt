@@ -67,10 +67,13 @@ class SettingActivity : AppCompatActivity() {
             if (billingManager.connectStatus == connectStatusTypes.connected) {
                 Log.i(TAG, "connected ..")
                 try {
-                    billingManager.skuDetailList
+//                    billingManager.skuDetailList
+//  2022.12.30 API 5.0 기준으로 이전
+                    billingManager.productDetailList
                     finish()
                 } catch (e: Exception) {
                     e.printStackTrace()
+                    Log.e(TAG, "error=${e.localizedMessage}")
                 }
             }
         }

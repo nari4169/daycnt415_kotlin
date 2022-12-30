@@ -12,9 +12,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class BillingManager(var mActivity: Activity) : PurchasesUpdatedListener, ConsumeResponseListener {
+
     var TAG = "BillingManager"
-    lateinit var mBillingClient: BillingClient
-    lateinit var mSkuDetails: List<SkuDetails>
+    var mBillingClient: BillingClient
 
     enum class connectStatusTypes {
         waiting, connected, fail, disconnected
@@ -26,14 +26,12 @@ class BillingManager(var mActivity: Activity) : PurchasesUpdatedListener, Consum
      * 구글에 설정한 구독 상품 아이디와 일치 하지 않으면 오류를 발생 시킴.
      * 21.04.20 이번에는 1회성 구매로 변경   210414_monthly_bill_999, 210420_monthly_bill
      */
-    var punchName = "220302_bill_1month_999"
-    var punchNameInapp = "210420_monthly_bill"
-    var payType = BillingClient.SkuType.SUBS
-    var option: SharedPreferences
+    var punchName = "221230_new_monthly" // ""221230_new_1month" // ""220302_bill_1month_999"
+    var payType = BillingClient.ProductType.SUBS // 변경전 SkuType 변경후 ProductType
+    var option: SharedPreferences = mActivity.getSharedPreferences("option", Context.MODE_PRIVATE)
     var editor: SharedPreferences.Editor
 
     init {
-        option = mActivity.getSharedPreferences("option", Context.MODE_PRIVATE)
         editor = option.edit()
         mBillingClient = BillingClient.newBuilder(mActivity)
             .setListener(this)
@@ -74,16 +72,38 @@ class BillingManager(var mActivity: Activity) : PurchasesUpdatedListener, Consum
         }
     }
 
-    fun purchase(skuDetails: SkuDetails?): Int {
-        val flowParams = BillingFlowParams.newBuilder()
-            .setSkuDetails(skuDetails!!)
-            .build()
-        return mBillingClient.launchBillingFlow(mActivity, flowParams).responseCode
+//    2022.12.30 purchaseProduct 으로 이전
+//    private fun purchase(skuDetails: SkuDetails?): Int {
+//        val flowParams = BillingFlowParams.newBuilder()
+//            .setSkuDetails(skuDetails!!)
+//            .build()
+//        return mBillingClient.launchBillingFlow(mActivity, flowParams).responseCode
+//    }
+
+    private fun purchaseProduct(productDetails: ProductDetails) : BillingResult {
+
+        val productDetailsParamsList = listOf(
+            productDetails.subscriptionOfferDetails?.get(0)?.let {
+                BillingFlowParams.ProductDetailsParams.newBuilder()
+                    .setProductDetails(productDetails)
+                    .setOfferToken(it.offerToken)
+                    .build()
+            }
+        )
+
+        val billingFlowParams = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(productDetailsParamsList).build()
+
+        return mBillingClient.launchBillingFlow(mActivity, billingFlowParams)
     }
 
     fun purchaseAsync() {
         Log.e(TAG, "--------------------------------------------------------------")
-        mBillingClient.queryPurchasesAsync(payType) { billingResult, list ->
+//        mBillingClient.queryPurchasesAsync(payType)
+//  2022.12.30 처리 방법을 변경
+        mBillingClient.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(payType).build()
+        ) { billingResult, list ->
             Log.e(TAG, "onQueryPurchasesResponse=" + billingResult.responseCode)
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             if (list.size < 1) {
@@ -113,46 +133,92 @@ class BillingManager(var mActivity: Activity) : PurchasesUpdatedListener, Consum
         }
     }
 
-    val skuDetailList: Unit
+    val productDetailList: Unit
         get() {
-            val skuIdList: MutableList<String> = ArrayList()
-            skuIdList.add(punchName)
-            val params = SkuDetailsParams.newBuilder()
-            params.setSkusList(skuIdList).setType(payType)
-            mBillingClient.querySkuDetailsAsync(
-                params.build(),
-                SkuDetailsResponseListener { billingResult, skuDetailsList ->
-                    if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-                        Log.i(TAG, "detail respCode=" + billingResult.responseCode)
-                        return@SkuDetailsResponseListener
-                    }
-                    if (skuDetailsList == null) {
-                        KakaoToast.makeToast(
-                            mActivity,
-                            mActivity.getString(R.string.msgNotInfo),
-                            Toast.LENGTH_LONG
-                        ).show()
-                        return@SkuDetailsResponseListener
-                    }
-                    Log.i(TAG, "listCount=" + skuDetailsList.size)
-                    for (skuDetails in skuDetailsList) {
-                        Log.i(TAG, """    
-     ${skuDetails.sku}
-     ${skuDetails.title}
-     ${skuDetails.price}
-     ${skuDetails.description}
-     ${skuDetails.freeTrialPeriod}
-     ${skuDetails.iconUrl}
-     ${skuDetails.introductoryPrice}
-     ${skuDetails.introductoryPriceAmountMicros}
-     ${skuDetails.originalPrice}
-     ${skuDetails.priceCurrencyCode}
-     """.trimIndent()
-                        )
-                    }
-                    purchase(skuDetailsList[0])
-                })
+
+            val productList =
+                listOf(
+                    QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(punchName)
+                        .setProductType(payType)
+                        .build()
+                )
+
+            Log.e(TAG, "productDetailList ------------------------------- ")
+
+            val params = QueryProductDetailsParams.newBuilder().setProductList(productList)
+
+            mBillingClient.queryProductDetailsAsync(params.build()) {
+                    billingResult,
+                    productDetailsList ->
+
+//                Log.e(TAG, "$billingResult $productDetailsList")
+
+                if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                    Log.i(TAG, "detail respCode=" + billingResult.responseCode)
+                    return@queryProductDetailsAsync
+                }
+                if (productDetailsList == null) {
+                    KakaoToast.makeToast(
+                        mActivity,
+                        mActivity.getString(R.string.msgNotInfo),
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@queryProductDetailsAsync
+                }
+                Log.e(TAG, "listCount=" + productDetailsList.size)
+                for (productDetail in productDetailsList) {
+                    Log.e(TAG, "\n ${productDetail.productId}" +
+                            "\n ${productDetail.title}" +
+                            "\n ${productDetail.name}" +
+                            "\n ${productDetail.productType}" +
+                            "\n ${productDetail.description}" )
+                }
+                purchaseProduct(productDetailsList[0])
+            }
+
         }
+//  2022.12.30 productDetailList 으로 이전
+//    val skuDetailList: Unit
+//        get() {
+//            val skuIdList: MutableList<String> = ArrayList()
+//            skuIdList.add(punchName)
+//            val params = SkuDetailsParams.newBuilder()
+//            params.setSkusList(skuIdList).setType(payType)
+//            mBillingClient.querySkuDetailsAsync(
+//                params.build(),
+//                SkuDetailsResponseListener { billingResult, skuDetailsList ->
+//                    if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+//                        Log.i(TAG, "detail respCode=" + billingResult.responseCode)
+//                        return@SkuDetailsResponseListener
+//                    }
+//                    if (skuDetailsList == null) {
+//                        KakaoToast.makeToast(
+//                            mActivity,
+//                            mActivity.getString(R.string.msgNotInfo),
+//                            Toast.LENGTH_LONG
+//                        ).show()
+//                        return@SkuDetailsResponseListener
+//                    }
+//                    Log.i(TAG, "listCount=" + skuDetailsList.size)
+//                    for (skuDetails in skuDetailsList) {
+//                        Log.i(TAG, """
+//     ${skuDetails.sku}
+//     ${skuDetails.title}
+//     ${skuDetails.price}
+//     ${skuDetails.description}
+//     ${skuDetails.freeTrialPeriod}
+//     ${skuDetails.iconUrl}
+//     ${skuDetails.introductoryPrice}
+//     ${skuDetails.introductoryPriceAmountMicros}
+//     ${skuDetails.originalPrice}
+//     ${skuDetails.priceCurrencyCode}
+//     """.trimIndent()
+//                        )
+//                    }
+//                    purchase(skuDetailsList[0])
+//                })
+//        }
 
     /**
      * @param billingResult
